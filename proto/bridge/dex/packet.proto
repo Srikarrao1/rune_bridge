@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package bridge.dex;
+
+option go_package = "bridge/x/dex/types";
+
+message DexPacketData {
+  oneof packet {
+    NoData               noData           = 1;
+    CreatePairPacketData createPairPacket = 2;
+    SellPacketData       sellPacket       = 3;
+    BuyPacketData        buyPacket        = 4;
+  }
+}
+
+message NoData {}
+
+// CreatePairPacketData defines a struct for the packet payload
+message CreatePairPacketData {
+  string sourceDenom = 1;
+  string targetDenom = 2;
+}
+
+// CreatePairPacketAck defines a struct for the packet acknowledgment
+message CreatePairPacketAck {}
+
+// SellPacketData defines a struct for the packet payload
+message SellPacketData {
+  string amountDenom = 1;
+  int32  amount      = 2;
+  string priceDenom  = 3;
+  int32  price       = 4;
+}
+
+// SellPacketAck defines a struct for the packet acknowledgment
+message SellPacketAck {
+  int32 remainingAmount = 1;
+  int32 gain            = 2;
+}
+
+// BuyPacketData defines a struct for the packet payload
+message BuyPacketData {
+  string amountDenom = 1;
+  int32  amount      = 2;
+  string priceDenom  = 3;
+  int32  price       = 4;
+}
+
+// BuyPacketAck defines a struct for the packet acknowledgment
+message BuyPacketAck {
+  int32 remainingAmount = 1;
+  int32 purchase        = 2;
+}
+

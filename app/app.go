@@ -76,6 +76,8 @@ import (
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 
 	bridgemodulekeeper "bridge/x/bridge/keeper"
+	dexmodulekeeper "bridge/x/dex/keeper"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	"bridge/docs"
@@ -141,6 +143,7 @@ type App struct {
 	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
 
 	BridgeKeeper bridgemodulekeeper.Keeper
+	DexKeeper    dexmodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// simulation manager
@@ -280,6 +283,7 @@ func New(
 		&app.GroupKeeper,
 		&app.CircuitBreakerKeeper,
 		&app.BridgeKeeper,
+		&app.DexKeeper,
 		// this line is used by starport scaffolding # stargate/app/keeperDefinition
 	); err != nil {
 		panic(err)

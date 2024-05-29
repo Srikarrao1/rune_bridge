@@ -4,42 +4,6 @@ info:
   name: ''
   description: ''
 paths:
-  /bridge/bridge/params:
-    get:
-      summary: Parameters queries the parameters of the module.
-      operationId: BridgeBridgeQuery_Params
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              params:
-                description: params holds all the parameters of this module.
-                type: object
-            description: >-
-              QueryParamsResponse is response type for the Query/Params RPC
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
   /bridge.bridge.Msg/UpdateParams:
     post:
       summary: |-
@@ -92,6 +56,762 @@ paths:
                   params defines the module parameters to update.
 
                   NOTE: All parameters must be supplied.
+                type: object
+            description: MsgUpdateParams is the Msg/UpdateParams request type.
+      tags:
+        - Msg
+  /bridge/dex/buy_order:
+    get:
+      operationId: BridgeDexQuery_BuyOrderAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              buyOrder:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    index:
+                      type: string
+                    amountDenom:
+                      type: string
+                    priceDenom:
+                      type: string
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /bridge/dex/buy_order/{index}:
+    get:
+      summary: Queries a list of BuyOrder items.
+      operationId: BridgeDexQuery_BuyOrder
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              buyOrder:
+                type: object
+                properties:
+                  index:
+                    type: string
+                  amountDenom:
+                    type: string
+                  priceDenom:
+                    type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: index
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /bridge/dex/denom_trace:
+    get:
+      operationId: BridgeDexQuery_DenomTraceAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              denomTrace:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    index:
+                      type: string
+                    port:
+                      type: string
+                    channel:
+                      type: string
+                    origin:
+                      type: string
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /bridge/dex/denom_trace/{index}:
+    get:
+      summary: Queries a list of DenomTrace items.
+      operationId: BridgeDexQuery_DenomTrace
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              denomTrace:
+                type: object
+                properties:
+                  index:
+                    type: string
+                  port:
+                    type: string
+                  channel:
+                    type: string
+                  origin:
+                    type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: index
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /bridge/dex/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: BridgeDexQuery_Params
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params holds all the parameters of this module.
+                type: object
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /bridge/dex/sell_order:
+    get:
+      operationId: BridgeDexQuery_SellOrderAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              sellOrder:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    index:
+                      type: string
+                    amountDenom:
+                      type: string
+                    priceDenom:
+                      type: string
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /bridge/dex/sell_order/{index}:
+    get:
+      summary: Queries a list of SellOrder items.
+      operationId: BridgeDexQuery_SellOrder
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              sellOrder:
+                type: object
+                properties:
+                  index:
+                    type: string
+                  amountDenom:
+                    type: string
+                  priceDenom:
+                    type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: index
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /bridge.dex.Msg/SendBuy:
+    post:
+      operationId: BridgeDexMsg_SendBuy
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              amountDenom:
+                type: string
+              amount:
+                type: integer
+                format: int32
+              priceDenom:
+                type: string
+              price:
+                type: integer
+                format: int32
+              creator:
+                type: string
+              port:
+                type: string
+              channelID:
+                type: string
+              timeoutTimestamp:
+                type: string
+                format: uint64
+      tags:
+        - Msg
+  /bridge.dex.Msg/SendCreatePair:
+    post:
+      operationId: BridgeDexMsg_SendCreatePair
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              sourceDenom:
+                type: string
+              targetDenom:
+                type: string
+              creator:
+                type: string
+              port:
+                type: string
+              channelID:
+                type: string
+              timeoutTimestamp:
+                type: string
+                format: uint64
+      tags:
+        - Msg
+  /bridge.dex.Msg/SendSell:
+    post:
+      operationId: BridgeDexMsg_SendSell
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              amountDenom:
+                type: string
+              amount:
+                type: integer
+                format: int32
+              priceDenom:
+                type: string
+              price:
+                type: integer
+                format: int32
+              creator:
+                type: string
+              port:
+                type: string
+              channelID:
+                type: string
+              timeoutTimestamp:
+                type: string
+                format: uint64
+      tags:
+        - Msg
+  /bridge.dex.Msg/UpdateParams:
+    post:
+      summary: |-
+        UpdateParams defines a (governance) operation for updating the module
+        parameters. The authority defaults to the x/gov module account.
+      operationId: BridgeDexMsg_UpdateParams
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            description: >-
+              MsgUpdateParamsResponse defines the response structure for
+              executing a
+
+              MsgUpdateParams message.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: body
+          description: MsgUpdateParams is the Msg/UpdateParams request type.
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              authority:
+                type: string
+                description: >-
+                  authority is the address that controls the module (defaults to
+                  x/gov unless overwritten).
+              params:
+                description: 'NOTE: All parameters must be supplied.'
                 type: object
             description: MsgUpdateParams is the Msg/UpdateParams request type.
       tags:
@@ -15194,6 +15914,29 @@ paths:
       tags:
         - Msg
 definitions:
+  bridge.bridge.MsgUpdateParams:
+    type: object
+    properties:
+      authority:
+        type: string
+        description: >-
+          authority is the address that controls the module (defaults to x/gov
+          unless overwritten).
+      params:
+        description: |-
+          params defines the module parameters to update.
+
+          NOTE: All parameters must be supplied.
+        type: object
+    description: MsgUpdateParams is the Msg/UpdateParams request type.
+  bridge.bridge.MsgUpdateParamsResponse:
+    type: object
+    description: |-
+      MsgUpdateParamsResponse defines the response structure for executing a
+      MsgUpdateParams message.
+  bridge.bridge.Params:
+    type: object
+    description: Params defines the parameters for the module.
   google.protobuf.Any:
     type: object
     properties:
@@ -15529,17 +16272,349 @@ definitions:
                   "@type": "type.googleapis.com/google.protobuf.Duration",
                   "value": "1.212s"
                 }
-  bridge.bridge.Params:
+  bridge.dex.BuyOrder:
+    type: object
+    properties:
+      index:
+        type: string
+      amountDenom:
+        type: string
+      priceDenom:
+        type: string
+  bridge.dex.DenomTrace:
+    type: object
+    properties:
+      index:
+        type: string
+      port:
+        type: string
+      channel:
+        type: string
+      origin:
+        type: string
+  bridge.dex.Params:
     type: object
     description: Params defines the parameters for the module.
-  bridge.bridge.QueryParamsResponse:
+  bridge.dex.QueryAllBuyOrderResponse:
+    type: object
+    properties:
+      buyOrder:
+        type: array
+        items:
+          type: object
+          properties:
+            index:
+              type: string
+            amountDenom:
+              type: string
+            priceDenom:
+              type: string
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  bridge.dex.QueryAllDenomTraceResponse:
+    type: object
+    properties:
+      denomTrace:
+        type: array
+        items:
+          type: object
+          properties:
+            index:
+              type: string
+            port:
+              type: string
+            channel:
+              type: string
+            origin:
+              type: string
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  bridge.dex.QueryAllSellOrderResponse:
+    type: object
+    properties:
+      sellOrder:
+        type: array
+        items:
+          type: object
+          properties:
+            index:
+              type: string
+            amountDenom:
+              type: string
+            priceDenom:
+              type: string
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  bridge.dex.QueryGetBuyOrderResponse:
+    type: object
+    properties:
+      buyOrder:
+        type: object
+        properties:
+          index:
+            type: string
+          amountDenom:
+            type: string
+          priceDenom:
+            type: string
+  bridge.dex.QueryGetDenomTraceResponse:
+    type: object
+    properties:
+      denomTrace:
+        type: object
+        properties:
+          index:
+            type: string
+          port:
+            type: string
+          channel:
+            type: string
+          origin:
+            type: string
+  bridge.dex.QueryGetSellOrderResponse:
+    type: object
+    properties:
+      sellOrder:
+        type: object
+        properties:
+          index:
+            type: string
+          amountDenom:
+            type: string
+          priceDenom:
+            type: string
+  bridge.dex.QueryParamsResponse:
     type: object
     properties:
       params:
         description: params holds all the parameters of this module.
         type: object
     description: QueryParamsResponse is response type for the Query/Params RPC method.
-  bridge.bridge.MsgUpdateParams:
+  bridge.dex.SellOrder:
+    type: object
+    properties:
+      index:
+        type: string
+      amountDenom:
+        type: string
+      priceDenom:
+        type: string
+  cosmos.base.query.v1beta1.PageRequest:
+    type: object
+    properties:
+      key:
+        type: string
+        format: byte
+        description: |-
+          key is a value returned in PageResponse.next_key to begin
+          querying the next page most efficiently. Only one of offset or key
+          should be set.
+      offset:
+        type: string
+        format: uint64
+        description: |-
+          offset is a numeric offset that can be used when key is unavailable.
+          It is less efficient than using key. Only one of offset or key should
+          be set.
+      limit:
+        type: string
+        format: uint64
+        description: >-
+          limit is the total number of results to be returned in the result
+          page.
+
+          If left empty it will default to a value to be set by each app.
+      count_total:
+        type: boolean
+        description: >-
+          count_total is set to true  to indicate that the result set should
+          include
+
+          a count of the total number of items available for pagination in UIs.
+
+          count_total is only respected when offset is used. It is ignored when
+          key
+
+          is set.
+      reverse:
+        type: boolean
+        description: >-
+          reverse is set to true if results are to be returned in the descending
+          order.
+
+
+          Since: cosmos-sdk 0.43
+    description: |-
+      message SomeRequest {
+               Foo some_parameter = 1;
+               PageRequest pagination = 2;
+       }
+    title: |-
+      PageRequest is to be embedded in gRPC request messages for efficient
+      pagination. Ex:
+  cosmos.base.query.v1beta1.PageResponse:
+    type: object
+    properties:
+      next_key:
+        type: string
+        format: byte
+        description: |-
+          next_key is the key to be passed to PageRequest.key to
+          query the next page most efficiently. It will be empty if
+          there are no more results.
+      total:
+        type: string
+        format: uint64
+        title: |-
+          total is total number of results available if PageRequest.count_total
+          was set, its value is undefined otherwise
+    description: |-
+      PageResponse is to be embedded in gRPC response messages where the
+      corresponding request message has used PageRequest.
+
+       message SomeResponse {
+               repeated Bar results = 1;
+               PageResponse page = 2;
+       }
+  bridge.dex.MsgSendBuy:
+    type: object
+    properties:
+      amountDenom:
+        type: string
+      amount:
+        type: integer
+        format: int32
+      priceDenom:
+        type: string
+      price:
+        type: integer
+        format: int32
+      creator:
+        type: string
+      port:
+        type: string
+      channelID:
+        type: string
+      timeoutTimestamp:
+        type: string
+        format: uint64
+  bridge.dex.MsgSendBuyResponse:
+    type: object
+  bridge.dex.MsgSendCreatePair:
+    type: object
+    properties:
+      sourceDenom:
+        type: string
+      targetDenom:
+        type: string
+      creator:
+        type: string
+      port:
+        type: string
+      channelID:
+        type: string
+      timeoutTimestamp:
+        type: string
+        format: uint64
+  bridge.dex.MsgSendCreatePairResponse:
+    type: object
+  bridge.dex.MsgSendSell:
+    type: object
+    properties:
+      amountDenom:
+        type: string
+      amount:
+        type: integer
+        format: int32
+      priceDenom:
+        type: string
+      price:
+        type: integer
+        format: int32
+      creator:
+        type: string
+      port:
+        type: string
+      channelID:
+        type: string
+      timeoutTimestamp:
+        type: string
+        format: uint64
+  bridge.dex.MsgSendSellResponse:
+    type: object
+  bridge.dex.MsgUpdateParams:
     type: object
     properties:
       authority:
@@ -15548,13 +16623,10 @@ definitions:
           authority is the address that controls the module (defaults to x/gov
           unless overwritten).
       params:
-        description: |-
-          params defines the module parameters to update.
-
-          NOTE: All parameters must be supplied.
+        description: 'NOTE: All parameters must be supplied.'
         type: object
     description: MsgUpdateParams is the Msg/UpdateParams request type.
-  bridge.bridge.MsgUpdateParamsResponse:
+  bridge.dex.MsgUpdateParamsResponse:
     type: object
     description: |-
       MsgUpdateParamsResponse defines the response structure for executing a

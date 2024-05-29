@@ -1,0 +1,115 @@
+syntax = "proto3";
+
+package bridge.dex;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "bridge/dex/params.proto";
+import "bridge/dex/sell_order.proto";
+import "bridge/dex/buy_order.proto";
+import "bridge/dex/denom_trace.proto";
+
+option go_package = "bridge/x/dex/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  
+  // Parameters queries the parameters of the module.
+  rpc Params (QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/bridge/dex/params";
+  
+  }
+  
+  // Queries a list of SellOrder items.
+  rpc SellOrder    (QueryGetSellOrderRequest) returns (QueryGetSellOrderResponse) {
+    option (google.api.http).get = "/bridge/dex/sell_order/{index}";
+  
+  }
+  rpc SellOrderAll (QueryAllSellOrderRequest) returns (QueryAllSellOrderResponse) {
+    option (google.api.http).get = "/bridge/dex/sell_order";
+  
+  }
+  
+  // Queries a list of BuyOrder items.
+  rpc BuyOrder    (QueryGetBuyOrderRequest) returns (QueryGetBuyOrderResponse) {
+    option (google.api.http).get = "/bridge/dex/buy_order/{index}";
+  
+  }
+  rpc BuyOrderAll (QueryAllBuyOrderRequest) returns (QueryAllBuyOrderResponse) {
+    option (google.api.http).get = "/bridge/dex/buy_order";
+  
+  }
+  
+  // Queries a list of DenomTrace items.
+  rpc DenomTrace    (QueryGetDenomTraceRequest) returns (QueryGetDenomTraceResponse) {
+    option (google.api.http).get = "/bridge/dex/denom_trace/{index}";
+  
+  }
+  rpc DenomTraceAll (QueryAllDenomTraceRequest) returns (QueryAllDenomTraceResponse) {
+    option (google.api.http).get = "/bridge/dex/denom_trace";
+  
+  }
+}
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  
+  // params holds all the parameters of this module.
+  Params params = 1 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+}
+
+message QueryGetSellOrderRequest {
+  string index = 1;
+}
+
+message QueryGetSellOrderResponse {
+  SellOrder sellOrder = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllSellOrderRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllSellOrderResponse {
+  repeated SellOrder                              sellOrder  = 1 [(gogoproto.nullable) = false];
+           cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetBuyOrderRequest {
+  string index = 1;
+}
+
+message QueryGetBuyOrderResponse {
+  BuyOrder buyOrder = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllBuyOrderRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllBuyOrderResponse {
+  repeated BuyOrder                               buyOrder   = 1 [(gogoproto.nullable) = false];
+           cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetDenomTraceRequest {
+  string index = 1;
+}
+
+message QueryGetDenomTraceResponse {
+  DenomTrace denomTrace = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllDenomTraceRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllDenomTraceResponse {
+  repeated DenomTrace                             denomTrace = 1 [(gogoproto.nullable) = false];
+           cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+

@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package bridge.dex;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "bridge/dex/params.proto";
+import "bridge/dex/sell_order.proto";
+import "bridge/dex/buy_order.proto";
+import "bridge/dex/denom_trace.proto";
+
+option go_package = "bridge/x/dex/types";
+
+// GenesisState defines the dex module's genesis state.
+message GenesisState {
+  
+  // params defines all the parameters of the module.
+           Params     params         = 1 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+           string     port_id        = 2;
+  repeated SellOrder  sellOrderList  = 3 [(gogoproto.nullable) = false] ;
+  repeated BuyOrder   buyOrderList   = 4 [(gogoproto.nullable) = false] ;
+  repeated DenomTrace denomTraceList = 5 [(gogoproto.nullable) = false] ;
+}
+

@@ -1,0 +1,12 @@
+syntax = "proto3";
+package bridge.dex;
+
+option go_package = "bridge/x/dex/types";
+
+message BuyOrder {
+  string index = 1; 
+  string amountDenom = 2; 
+  string priceDenom = 3; 
+  
+}
+
