@@ -3,14 +3,13 @@ package dex
 
 import (
 	fmt "fmt"
-	io "io"
-	reflect "reflect"
-	sync "sync"
-
 	runtime "github.com/cosmos/cosmos-proto/runtime"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoiface "google.golang.org/protobuf/runtime/protoiface"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	io "io"
+	reflect "reflect"
+	sync "sync"
 )
 
 var (
@@ -18,6 +17,7 @@ var (
 	fd_BuyOrder_index       protoreflect.FieldDescriptor
 	fd_BuyOrder_amountDenom protoreflect.FieldDescriptor
 	fd_BuyOrder_priceDenom  protoreflect.FieldDescriptor
+	fd_BuyOrder_book        protoreflect.FieldDescriptor
 )
 
 func init() {
@@ -26,6 +26,7 @@ func init() {
 	fd_BuyOrder_index = md_BuyOrder.Fields().ByName("index")
 	fd_BuyOrder_amountDenom = md_BuyOrder.Fields().ByName("amountDenom")
 	fd_BuyOrder_priceDenom = md_BuyOrder.Fields().ByName("priceDenom")
+	fd_BuyOrder_book = md_BuyOrder.Fields().ByName("book")
 }
 
 var _ protoreflect.Message = (*fastReflection_BuyOrder)(nil)
@@ -111,6 +112,12 @@ func (x *fastReflection_BuyOrder) Range(f func(protoreflect.FieldDescriptor, pro
 			return
 		}
 	}
+	if x.Book != nil {
+		value := protoreflect.ValueOfMessage(x.Book.ProtoReflect())
+		if !f(fd_BuyOrder_book, value) {
+			return
+		}
+	}
 }
 
 // Has reports whether a field is populated.
@@ -132,6 +139,8 @@ func (x *fastReflection_BuyOrder) Has(fd protoreflect.FieldDescriptor) bool {
 		return x.AmountDenom != ""
 	case "bridge.dex.BuyOrder.priceDenom":
 		return x.PriceDenom != ""
+	case "bridge.dex.BuyOrder.book":
+		return x.Book != nil
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bridge.dex.BuyOrder"))
@@ -154,6 +163,8 @@ func (x *fastReflection_BuyOrder) Clear(fd protoreflect.FieldDescriptor) {
 		x.AmountDenom = ""
 	case "bridge.dex.BuyOrder.priceDenom":
 		x.PriceDenom = ""
+	case "bridge.dex.BuyOrder.book":
+		x.Book = nil
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bridge.dex.BuyOrder"))
@@ -179,6 +190,9 @@ func (x *fastReflection_BuyOrder) Get(descriptor protoreflect.FieldDescriptor) p
 	case "bridge.dex.BuyOrder.priceDenom":
 		value := x.PriceDenom
 		return protoreflect.ValueOfString(value)
+	case "bridge.dex.BuyOrder.book":
+		value := x.Book
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bridge.dex.BuyOrder"))
@@ -205,6 +219,8 @@ func (x *fastReflection_BuyOrder) Set(fd protoreflect.FieldDescriptor, value pro
 		x.AmountDenom = value.Interface().(string)
 	case "bridge.dex.BuyOrder.priceDenom":
 		x.PriceDenom = value.Interface().(string)
+	case "bridge.dex.BuyOrder.book":
+		x.Book = value.Message().Interface().(*OrderBook)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bridge.dex.BuyOrder"))
@@ -225,6 +241,11 @@ func (x *fastReflection_BuyOrder) Set(fd protoreflect.FieldDescriptor, value pro
 // Mutable is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_BuyOrder) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
+	case "bridge.dex.BuyOrder.book":
+		if x.Book == nil {
+			x.Book = new(OrderBook)
+		}
+		return protoreflect.ValueOfMessage(x.Book.ProtoReflect())
 	case "bridge.dex.BuyOrder.index":
 		panic(fmt.Errorf("field index of message bridge.dex.BuyOrder is not mutable"))
 	case "bridge.dex.BuyOrder.amountDenom":
@@ -250,6 +271,9 @@ func (x *fastReflection_BuyOrder) NewField(fd protoreflect.FieldDescriptor) prot
 		return protoreflect.ValueOfString("")
 	case "bridge.dex.BuyOrder.priceDenom":
 		return protoreflect.ValueOfString("")
+	case "bridge.dex.BuyOrder.book":
+		m := new(OrderBook)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bridge.dex.BuyOrder"))
@@ -331,6 +355,10 @@ func (x *fastReflection_BuyOrder) ProtoMethods() *protoiface.Methods {
 		if l > 0 {
 			n += 1 + l + runtime.Sov(uint64(l))
 		}
+		if x.Book != nil {
+			l = options.Size(x.Book)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
 		}
@@ -359,6 +387,20 @@ func (x *fastReflection_BuyOrder) ProtoMethods() *protoiface.Methods {
 		if x.unknownFields != nil {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.Book != nil {
+			encoded, err := options.Marshal(x.Book)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x22
 		}
 		if len(x.PriceDenom) > 0 {
 			i -= len(x.PriceDenom)
@@ -526,6 +568,42 @@ func (x *fastReflection_BuyOrder) ProtoMethods() *protoiface.Methods {
 				}
 				x.PriceDenom = string(dAtA[iNdEx:postIndex])
 				iNdEx = postIndex
+			case 4:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Book", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.Book == nil {
+					x.Book = &OrderBook{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Book); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
 				skippy, err := runtime.Skip(dAtA[iNdEx:])
@@ -579,9 +657,10 @@ type BuyOrder struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Index       string `protobuf:"bytes,1,opt,name=index,proto3" json:"index,omitempty"`
-	AmountDenom string `protobuf:"bytes,2,opt,name=amountDenom,proto3" json:"amountDenom,omitempty"`
-	PriceDenom  string `protobuf:"bytes,3,opt,name=priceDenom,proto3" json:"priceDenom,omitempty"`
+	Index       string     `protobuf:"bytes,1,opt,name=index,proto3" json:"index,omitempty"`
+	AmountDenom string     `protobuf:"bytes,2,opt,name=amountDenom,proto3" json:"amountDenom,omitempty"`
+	PriceDenom  string     `protobuf:"bytes,3,opt,name=priceDenom,proto3" json:"priceDenom,omitempty"`
+	Book        *OrderBook `protobuf:"bytes,4,opt,name=book,proto3" json:"book,omitempty"`
 }
 
 func (x *BuyOrder) Reset() {
@@ -625,27 +704,38 @@ func (x *BuyOrder) GetPriceDenom() string {
 	return ""
 }
 
+func (x *BuyOrder) GetBook() *OrderBook {
+	if x != nil {
+		return x.Book
+	}
+	return nil
+}
+
 var File_bridge_dex_buy_order_proto protoreflect.FileDescriptor
 
 var file_bridge_dex_buy_order_proto_rawDesc = []byte{
 	0x0a, 0x1a, 0x62, 0x72, 0x69, 0x64, 0x67, 0x65, 0x2f, 0x64, 0x65, 0x78, 0x2f, 0x62, 0x75, 0x79,
 	0x5f, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0a, 0x62, 0x72,
-	0x69, 0x64, 0x67, 0x65, 0x2e, 0x64, 0x65, 0x78, 0x22, 0x62, 0x0a, 0x08, 0x42, 0x75, 0x79, 0x4f,
-	0x72, 0x64, 0x65, 0x72, 0x12, 0x14, 0x0a, 0x05, 0x69, 0x6e, 0x64, 0x65, 0x78, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x05, 0x69, 0x6e, 0x64, 0x65, 0x78, 0x12, 0x20, 0x0a, 0x0b, 0x61, 0x6d,
-	0x6f, 0x75, 0x6e, 0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x0b, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x1e, 0x0a, 0x0a,
-	0x70, 0x72, 0x69, 0x63, 0x65, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x0a, 0x70, 0x72, 0x69, 0x63, 0x65, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x42, 0x85, 0x01, 0x0a,
-	0x0e, 0x63, 0x6f, 0x6d, 0x2e, 0x62, 0x72, 0x69, 0x64, 0x67, 0x65, 0x2e, 0x64, 0x65, 0x78, 0x42,
-	0x0d, 0x42, 0x75, 0x79, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01,
-	0x5a, 0x1b, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x73, 0x64, 0x6b, 0x2e, 0x69, 0x6f, 0x2f, 0x61,
-	0x70, 0x69, 0x2f, 0x62, 0x72, 0x69, 0x64, 0x67, 0x65, 0x2f, 0x64, 0x65, 0x78, 0xa2, 0x02, 0x03,
-	0x42, 0x44, 0x58, 0xaa, 0x02, 0x0a, 0x42, 0x72, 0x69, 0x64, 0x67, 0x65, 0x2e, 0x44, 0x65, 0x78,
-	0xca, 0x02, 0x0a, 0x42, 0x72, 0x69, 0x64, 0x67, 0x65, 0x5c, 0x44, 0x65, 0x78, 0xe2, 0x02, 0x16,
-	0x42, 0x72, 0x69, 0x64, 0x67, 0x65, 0x5c, 0x44, 0x65, 0x78, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65,
-	0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x0b, 0x42, 0x72, 0x69, 0x64, 0x67, 0x65, 0x3a,
-	0x3a, 0x44, 0x65, 0x78, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x69, 0x64, 0x67, 0x65, 0x2e, 0x64, 0x65, 0x78, 0x1a, 0x16, 0x62, 0x72, 0x69, 0x64, 0x67, 0x65,
+	0x2f, 0x64, 0x65, 0x78, 0x2f, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x22, 0x8d, 0x01, 0x0a, 0x08, 0x42, 0x75, 0x79, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x12, 0x14, 0x0a,
+	0x05, 0x69, 0x6e, 0x64, 0x65, 0x78, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x69, 0x6e,
+	0x64, 0x65, 0x78, 0x12, 0x20, 0x0a, 0x0b, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x44, 0x65, 0x6e,
+	0x6f, 0x6d, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74,
+	0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x1e, 0x0a, 0x0a, 0x70, 0x72, 0x69, 0x63, 0x65, 0x44, 0x65,
+	0x6e, 0x6f, 0x6d, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x70, 0x72, 0x69, 0x63, 0x65,
+	0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x29, 0x0a, 0x04, 0x62, 0x6f, 0x6f, 0x6b, 0x18, 0x04, 0x20,
+	0x01, 0x28, 0x0b, 0x32, 0x15, 0x2e, 0x62, 0x72, 0x69, 0x64, 0x67, 0x65, 0x2e, 0x64, 0x65, 0x78,
+	0x2e, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x42, 0x6f, 0x6f, 0x6b, 0x52, 0x04, 0x62, 0x6f, 0x6f, 0x6b,
+	0x42, 0x85, 0x01, 0x0a, 0x0e, 0x63, 0x6f, 0x6d, 0x2e, 0x62, 0x72, 0x69, 0x64, 0x67, 0x65, 0x2e,
+	0x64, 0x65, 0x78, 0x42, 0x0d, 0x42, 0x75, 0x79, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x50, 0x72, 0x6f,
+	0x74, 0x6f, 0x50, 0x01, 0x5a, 0x1b, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x73, 0x64, 0x6b, 0x2e,
+	0x69, 0x6f, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x62, 0x72, 0x69, 0x64, 0x67, 0x65, 0x2f, 0x64, 0x65,
+	0x78, 0xa2, 0x02, 0x03, 0x42, 0x44, 0x58, 0xaa, 0x02, 0x0a, 0x42, 0x72, 0x69, 0x64, 0x67, 0x65,
+	0x2e, 0x44, 0x65, 0x78, 0xca, 0x02, 0x0a, 0x42, 0x72, 0x69, 0x64, 0x67, 0x65, 0x5c, 0x44, 0x65,
+	0x78, 0xe2, 0x02, 0x16, 0x42, 0x72, 0x69, 0x64, 0x67, 0x65, 0x5c, 0x44, 0x65, 0x78, 0x5c, 0x47,
+	0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x0b, 0x42, 0x72, 0x69,
+	0x64, 0x67, 0x65, 0x3a, 0x3a, 0x44, 0x65, 0x78, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -662,14 +752,16 @@ func file_bridge_dex_buy_order_proto_rawDescGZIP() []byte {
 
 var file_bridge_dex_buy_order_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_bridge_dex_buy_order_proto_goTypes = []interface{}{
-	(*BuyOrder)(nil), // 0: bridge.dex.BuyOrder
+	(*BuyOrder)(nil),  // 0: bridge.dex.BuyOrder
+	(*OrderBook)(nil), // 1: bridge.dex.OrderBook
 }
 var file_bridge_dex_buy_order_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	1, // 0: bridge.dex.BuyOrder.book:type_name -> bridge.dex.OrderBook
+	1, // [1:1] is the sub-list for method output_type
+	1, // [1:1] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_bridge_dex_buy_order_proto_init() }
@@ -677,6 +769,7 @@ func file_bridge_dex_buy_order_proto_init() {
 	if File_bridge_dex_buy_order_proto != nil {
 		return
 	}
+	file_bridge_dex_order_proto_init()
 	if !protoimpl.UnsafeEnabled {
 		file_bridge_dex_buy_order_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*BuyOrder); i {

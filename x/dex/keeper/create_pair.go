@@ -37,13 +37,21 @@ func (k Keeper) TransmitCreatePairPacket(
 
 // OnRecvCreatePairPacket processes packet reception
 func (k Keeper) OnRecvCreatePairPacket(ctx sdk.Context, packet channeltypes.Packet, data types.CreatePairPacketData) (packetAck types.CreatePairPacketAck, err error) {
-	// validate packet data upon receiving
-	if err := data.ValidateBasic(); err != nil {
-		return packetAck, err
+	//Get an order index
+
+	pairIndex := types.OrderBookIndex(packet.SourcePort, packet.SourceChannel, data.SourceDenom, data.TargetDenom)
+
+	_, found := k.GetBuyOrder(ctx, pairIndex)
+	if found {
+		return packetAck, errors.New("the pair already exists")
 	}
 
-	// TODO: packet reception logic
+	book := types.NewBuyOrderBook(data.SourceDenom, data.TargetDenom)
 
+	book.Index = pairIndex
+
+	// TODO: packet reception logic
+	k.SetBuyOrder(ctx, book)
 	return packetAck, nil
 }
 
@@ -52,10 +60,6 @@ func (k Keeper) OnRecvCreatePairPacket(ctx sdk.Context, packet channeltypes.Pack
 func (k Keeper) OnAcknowledgementCreatePairPacket(ctx sdk.Context, packet channeltypes.Packet, data types.CreatePairPacketData, ack channeltypes.Acknowledgement) error {
 	switch dispatchedAck := ack.Response.(type) {
 	case *channeltypes.Acknowledgement_Error:
-
-		// TODO: failed acknowledgement logic
-		_ = dispatchedAck.Error
-
 		return nil
 	case *channeltypes.Acknowledgement_Result:
 		// Decode the packet acknowledgment
@@ -66,8 +70,13 @@ func (k Keeper) OnAcknowledgementCreatePairPacket(ctx sdk.Context, packet channe
 			return errors.New("cannot unmarshal acknowledgment")
 		}
 
-		// TODO: successful acknowledgement logic
+		//Set the sell order book
 
+		pairIndex := types.OrderBookIndex(packet.SourcePort, packet.SourceChannel, data.SourceDenom, data.TargetDenom)
+		book := types.NewSellOrderBook(data.SourceDenom, data.TargetDenom)
+		book.Index = pairIndex
+
+		k.SetSellOrder(ctx, book)
 		return nil
 	default:
 		// The counter-party module doesn't implement the correct acknowledgment format

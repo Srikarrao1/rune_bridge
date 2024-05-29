@@ -9,22 +9,35 @@ accounts:
 - name: alice
   coins:
   - 1000token
-  - 100000000stake
-  - 1000cosmoscoin
+  - 1000000000stake
+  - 1000cosmos
 - name: bob
   coins:
   - 500token
-  - 1000cosmoscoin
+  - 1000cosmos
   - 100000000stake
 faucet:
   name: bob
   coins:
   - 5token
   - 100000stake
-  host: 0.0.0.0:4500
+  host: :4501
 genesis:
-  chain_id: mars
+  chain_id: cosmos
 validators:
 - name: alice
   bonded: 100000000stake
-  home: $HOME/.mars
+  app:
+    api:
+      address: :1318
+    grpc:
+      address: :9092
+    grpc-web:
+      address: :9093
+  config:
+    p2p:
+      laddr: :26658
+    rpc:
+      laddr: :26659
+      pprof_laddr: :6061
+  home: $HOME/.cosmos
