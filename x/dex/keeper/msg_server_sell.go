@@ -8,7 +8,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	clienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
-	channel "github.com/cosmos/ibc-go/v8/modules/core/04-channel"
+	// channel "github.com/cosmos/ibc-go/v8/modules/core/04-channel"
 )
 
 func (k msgServer) SendSell(goCtx context.Context, msg *types.MsgSendSell) (*types.MsgSendSellResponse, error) {
@@ -62,7 +62,7 @@ func (k msgServer) SendSell(goCtx context.Context, msg *types.MsgSendSell) (*typ
 
 // ...
 
-func (k Keeper) OnRecvSellOrderPacket(ctx sdk.Context, packet channel.Packet, data types.SellPacketData) (packetAck types.SellPacketAck, err error) {
+func (k Keeper) OnRecvSellOrderPacket(ctx sdk.Context, packet channeltypes.Packet, data types.SellPacketData) (packetAck types.SellPacketAck, err error) {
     if err := data.ValidateBasic(); err != nil {
         return packetAck, err
     }
