@@ -10,7 +10,7 @@ import (
 )
 
 func(k Keeper) SaveVoucherDenom(ctx sdk.Context, port string, channel string, denom string) {
-	voucher := VoucherDenom(port, channel, denom)
+	voucher := k.VoucherDenom(port, channel, denom)
 
 	//Store the original denom
 

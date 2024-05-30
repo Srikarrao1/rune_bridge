@@ -30,6 +30,8 @@ message SellPacketData {
   int32  amount      = 2;
   string priceDenom  = 3;
   int32  price       = 4;
+  string seller = 5;
+
 }
 
 // SellPacketAck defines a struct for the packet acknowledgment
@@ -44,6 +46,8 @@ message BuyPacketData {
   int32  amount      = 2;
   string priceDenom  = 3;
   int32  price       = 4;
+  string buyer = 5;
+
 }
 
 // BuyPacketAck defines a struct for the packet acknowledgment

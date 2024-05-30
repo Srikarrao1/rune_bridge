@@ -53,8 +53,15 @@ func (k Keeper) OnAcknowledgementSellPacket(ctx sdk.Context, packet channeltypes
 	switch dispatchedAck := ack.Response.(type) {
 	case *channeltypes.Acknowledgement_Error:
 
-		// TODO: failed acknowledgement logic
-		_ = dispatchedAck.Error
+		// In case of error we mint back the native token
+        receiver, err := sdk.AccAddressFromBech32(data.Seller)
+        if err != nil {
+            return err
+        }
+
+        if err := k.SafeMint(ctx, packet.SourcePort, packet.SourceChannel, receiver, data.AmountDenom, data.Amount); err != nil {
+            return err
+        }
 
 		return nil
 	case *channeltypes.Acknowledgement_Result:
@@ -65,8 +72,42 @@ func (k Keeper) OnAcknowledgementSellPacket(ctx sdk.Context, packet channeltypes
 			// The counter-party module doesn't implement the correct acknowledgment format
 			return errors.New("cannot unmarshal acknowledgment")
 		}
+		// Get the sell order book
+        pairIndex := types.OrderBookIndex(packet.SourcePort, packet.SourceChannel, data.AmountDenom, data.PriceDenom)
+        book, found := k.GetSellOrder(ctx, pairIndex)
+        if !found {
+            panic("sell order book must exist")
+        }
 
-		// TODO: successful acknowledgement logic
+		 // Append the remaining amount of the order
+		 if packetAck.RemainingAmount > 0 {
+            _, err := book.AppendOrder(data.Seller, packetAck.RemainingAmount, data.Price)
+            if err != nil {
+                return err
+            }
+
+            // Save the new order book
+            k.SetSellOrder(ctx, book)
+        }
+
+        // Mint the gains
+        if packetAck.Gain > 0 {
+            receiver, err := sdk.AccAddressFromBech32(data.Seller)
+            if err != nil {
+                return err
+            }
+
+            finalPriceDenom, saved := k.OriginalDenom(ctx, packet.SourcePort, packet.SourceChannel, data.PriceDenom)
+            if !saved {
+                // If it was not from this chain we use voucher as denom
+                finalPriceDenom = k.VoucherDenom(packet.DestinationPort, packet.DestinationChannel, data.PriceDenom)
+            }
+
+            if err := k.SafeMint(ctx, packet.SourcePort, packet.SourceChannel, receiver, finalPriceDenom, packetAck.Gain); err != nil {
+                return err
+            }
+        }
+
 
 		return nil
 	default:
@@ -78,7 +119,15 @@ func (k Keeper) OnAcknowledgementSellPacket(ctx sdk.Context, packet channeltypes
 // OnTimeoutSellPacket responds to the case where a packet has not been transmitted because of a timeout
 func (k Keeper) OnTimeoutSellPacket(ctx sdk.Context, packet channeltypes.Packet, data types.SellPacketData) error {
 
-	// TODO: packet timeout logic
-
+	  // In case of error we mint back the native token
+	  receiver, err := sdk.AccAddressFromBech32(data.Seller)
+	  if err != nil {
+		  return err
+	  }
+  
+	  if err := k.SafeMint(ctx, packet.SourcePort, packet.SourceChannel, receiver, data.AmountDenom, data.Amount); err != nil {
+		  return err
+	  }
+	  
 	return nil
 }

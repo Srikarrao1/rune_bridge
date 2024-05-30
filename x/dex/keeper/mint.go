@@ -1,13 +1,14 @@
 package keeper
 
 import (
-    "fmt"
-    "strings"
+	"bridge/x/bridge/types"
+	"fmt"
+	"strings"
 
-    sdkmath "cosmossdk.io/math"
-    sdk "github.com/cosmos/cosmos-sdk/types"
-    ibctransfertypes "github.com/cosmos/ibc-go/modules/apps/transfer/types"
-// 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	sdkmath "cosmossdk.io/math"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	ibctransfertypes "github.com/cosmos/ibc-go/modules/apps/transfer/types"
+	// bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 )
 
 func isIBCToken(denom string) bool {
